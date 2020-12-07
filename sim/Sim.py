@@ -37,8 +37,12 @@ class Sim():
     def run(self, callBack):
         for i in self.timeSlices:
             self.broker.setTimeSlice(i)
+            self.broker.addressQueue()
             for t in self.traders:
                 callBack(i, self.broker, t)
+                t.updateStats(self.broker)
+        for t in self.traders:
+            t.finalUpdateStats()
 
     def initTraders(self, listOfStrategies):
         for i in listOfStrategies:
@@ -58,6 +62,9 @@ class Sim():
 
         for i in range(deltaTimeSlices.days + 1):
             iterDateTime = startDate + datetime.timedelta(i)
-            newTimeSlice = TimeSlice(tickerList, startDate, iterDateTime)
+            if(i == 0):
+                newTimeSlice = TimeSlice(tickerList, startDate, iterDateTime, None)
+            else:
+                newTimeSlice = TimeSlice(tickerList, startDate, iterDateTime, self.timeSlices[-1])
             self.timeSlices.append(newTimeSlice)        
     

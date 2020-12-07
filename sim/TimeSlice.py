@@ -9,12 +9,15 @@ class TimeSlice():
 
     assets = {}
     currentTime = None
+    prevTimeSlice = None
 
     def __init__(self, tickerList : [str], 
                     universeStartTime : datetime.datetime,
-                    currentTime : datetime.datetime):
+                    currentTime : datetime.datetime,
+                    prevTimeSlice):
         self.currentTime = currentTime
         self.initAssets(tickerList, universeStartTime, currentTime)
+        self.prevTimeSlice = prevTimeSlice
 
     def initAssets(self, tickerList : [str], startTime : datetime.datetime, currentTime : datetime.datetime):
         """

@@ -16,6 +16,26 @@ class SymbolBuilder():
     def __init__(self):
         logging.debug("in Symbol Model Builder")
 
+    def buildFromHand(self, ticker,
+                            lastupdate,
+                            commonCompanyName,
+                            ipoDateTime,
+                            industry, 
+                            sector,
+                            country,
+                            market_cap) -> Symbol:
+        return self.build(
+            ticker = ticker,
+            yHistoricalData = None,
+            lastUpdate = lastupdate,
+            commonCompanyName = commonCompanyName,
+            ipoYear = ipoDateTime,
+            industry = industry,
+            sector = sector,
+            country = country,
+            marketCap = market_cap
+        )
+
     def buildFromNasdaqDf(self, nasdaqDf : pd.DataFrame) -> [Symbol]:
         returnArray = []
         for index, row in nasdaqDf.iterrows():

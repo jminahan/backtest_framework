@@ -25,6 +25,7 @@ from resources.scripts.Script import Script
 from resources.scripts.loadNasdaqScreenerSymbols import LoadNasdaqScreenerSymbols
 from resources.scripts.pullYahooFinanceHistoricalDataForSymbols import PullYahooFinancialHistoricalDataForSymbols
 from resources.scripts.plotTest import PlotTest
+from resources.scripts.loadIndividualStock import LoadIndividualStocks
 
 ##sim
 from sim.Sim import Sim
@@ -37,6 +38,9 @@ from sim.Trade import Trade
 from strategies.BuyAndHold import BuyAndHold
 from strategies.BuyAndHoldSpecific import BuyAndHoldSpecific
 from strategies.Strategy import Strategy
+
+##finops utils
+from utils.src.finops.Finops import Finops
 class Main(Script):
 
     def __init__(self):
@@ -44,7 +48,7 @@ class Main(Script):
 
         ##the below can be thought of as "ensuring the environment is correct"
         self.initializeConfigurationOptions()
-        self.initializeLocalVars();
+        self.initializeLocalVars()
         self.runScripts()
 
     def run(self):
@@ -52,8 +56,8 @@ class Main(Script):
         Run implentation of super script
         """
         self.sim.run(self.timeStepResponse)
-        for i in self.sim.traders:
-            print(i.cash)
+        print(Finops.calculateBeta(dfStrat=self.sim.traders[1].stats.portfolioValueByTimeSliceAsDf(),
+                                        dfBenchMark=self.sim.traders[0].stats.portfolioValueByTimeSliceAsDf()))
 
     def timeStepResponse(self, currentTimeSlice : TimeSlice,
                             broker : Broker,
@@ -62,7 +66,7 @@ class Main(Script):
         This is passed as a callback in run
         and is called once per trader per timestep
         """
-        broker.takeTrades(trader,trader.strat.getTradeSignals(currentTimeSlice))
+        broker.takeTrades(trader.strat.getTradeSignals(currentTimeSlice), trader)
 
     def initializeConfigurationOptions(self):
         self.params = {
@@ -79,7 +83,8 @@ class Main(Script):
         self.scripts = {
             LoadNasdaqScreenerSymbols : False,
             PullYahooFinancialHistoricalDataForSymbols : False,
-            PlotTest : False
+            PlotTest : False,
+            LoadIndividualStocks : False
         }
 
     def initializeLocalVars(self):
@@ -94,8 +99,8 @@ class Main(Script):
         self.symbolMongoInterface = SymbolMongoInterface(self.monInterface)
 
         self.strategies : [Strategy] = [
-                                        BuyAndHoldSpecific("AAPL", consts.BUY_AND_HOLD_SPECIFIC_TITLE),
-                                        BuyAndHoldSpecific("ABBV", consts.BUY_AND_HOLD_SPECIFIC_TITLE)
+                                        BuyAndHoldSpecific("SPY", consts.BUY_AND_HOLD_SPECIFIC_TITLE),
+                                        BuyAndHoldSpecific("AAPL", consts.BUY_AND_HOLD_SPECIFIC_TITLE)
                                         ]
 
         self.sim = Sim(

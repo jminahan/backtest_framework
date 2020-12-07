@@ -9,14 +9,15 @@ class LoadNasdaqScreenerSymbols(Script):
     def __init__(self):
         logging.debug("In LoadNasdaqScreenerSymbol Script")
 
-    params = {
-        consts.DB_CONNECTION_FIELD : consts.DB_CONNECTION,
-        consts.DB_CONNECTION_HOST_FIELD : consts.DB_CONNECTION_HOST,
-        consts.DB_CONNECTION_PORT_FIELD : consts.DB_CONNECTION_PORT
-    }
-    
     @staticmethod
     def run():
+
+        params = {
+            consts.DB_CONNECTION_FIELD : consts.DB_CONNECTION,
+            consts.DB_CONNECTION_HOST_FIELD : consts.DB_CONNECTION_HOST,
+            consts.DB_CONNECTION_PORT_FIELD : consts.DB_CONNECTION_PORT
+        }
+
         pdInterface = PandasInterface()
         symbolBuilder = SymbolBuilder()
         monInterface = MongoInterface(params)
