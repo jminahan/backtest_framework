@@ -56,8 +56,8 @@ class Main(Script):
         Run implentation of super script
         """
         self.sim.run(self.timeStepResponse)
-        print(Finops.calculateBeta(dfStrat=self.sim.traders[1].stats.portfolioValueByTimeSliceAsDf(),
-                                        dfBenchMark=self.sim.traders[0].stats.portfolioValueByTimeSliceAsDf()))
+        print(Finops.calculateSharpe(dfStrat=self.sim.traders[1].stats.portfolioValueByTimeSliceAsDf(),
+                                        dfBenchmark=self.sim.traders[0].stats.portfolioValueByTimeSliceAsDf()))
 
     def timeStepResponse(self, currentTimeSlice : TimeSlice,
                             broker : Broker,

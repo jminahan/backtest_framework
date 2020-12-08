@@ -5,6 +5,31 @@ class Finops():
         pass
 
     @staticmethod
+    def calculateAlpha(dfStrat : pd.DataFrame, dfBenchMark : pd.DataFrame):
+        returns = (dfStrat["Close"][-1] - dfStrat["Close"][1]) / dfStrat["Close"][1]
+        returnsBenchmark (dfBechMark["Close"][-1] - dfBenchMark["Close"][1]) / dfStrat["Close"][1]
+
+        return returns - returnsBenchmark
+
+    @staticmethod
+    def calculateSharpe(dfStrat: pd.DataFrame, dfBenchmark : pd.DataFrame):
+        """
+        The dfstrat should be running value of how much the portfolio was worth
+        via Trader states
+        """
+
+        ##NOTE: TODO we are assuming the risk free rate is inconsequential
+        ##  I'm not sure this is a fair assumption
+
+        dfStratMovement = Finops.priceToPctChange(dfStrat)
+        dfBenchmarkMovement = Finops.priceToPctChange(dfBenchmark)
+        dfExcessReturns : pd.DataFrame = dfStratMovement - dfBenchmarkMovement
+        excessReturnStdDev = dfExcessReturns.std(0)
+        returns = (dfStrat["Close"][-1] - dfStrat["Close"][1]) / dfStrat["Close"][1]
+
+        return returns/(excessReturnsStdDev["Close"])
+
+    @staticmethod
     def calculateBeta(dfStrat : pd.DataFrame, dfBenchMark : pd.DataFrame) -> float:
         """
         the dfStrat should be a running value of how much the portfolio was worth via TraderStats
