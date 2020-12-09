@@ -11,23 +11,22 @@ class TimeSlice():
     currentTime = None
     prevTimeSlice = None
 
-    def __init__(self, tickerList : [str], 
+    def __init__(self, tickerListDict : {}, 
                     universeStartTime : datetime.datetime,
                     currentTime : datetime.datetime,
                     prevTimeSlice):
         self.currentTime = currentTime
-        self.initAssets(tickerList, universeStartTime, currentTime)
+        self.initAssets(tickerListDict, universeStartTime, currentTime)
         self.prevTimeSlice = prevTimeSlice
 
-    def initAssets(self, tickerList : [str], startTime : datetime.datetime, currentTime : datetime.datetime):
+    def initAssets(self, tickerListDict : {}, startTime : datetime.datetime, currentTime : datetime.datetime):
         """
         Initialize assets of this time slice
         """
-        for i in tickerList:
-            assetSymbol : Symbol = Symbol.objects(ticker=i)[0]
+        for i in tickerListDict.keys():
             startTimeKey : str = startTime.strftime("%Y-%m-%d")
             currentTimeKey : str = currentTime.strftime("%Y-%m-%d")
-            assetTimeSliceHistoricalData = assetSymbol.yHistoricalData.historicalData.set_index("Date").loc[startTimeKey :currentTimeKey]
+            assetTimeSliceHistoricalData = tickerListDict[i]["HistoricalData"].set_index("Date").loc[startTimeKey :currentTimeKey]
             iterAsset = Asset(assetTimeSliceHistoricalData)
             self.assets[i] = iterAsset
 

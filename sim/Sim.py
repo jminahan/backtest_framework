@@ -2,6 +2,8 @@ from sim.TimeSlice import TimeSlice
 import datetime
 from sim.Trader import Trader
 from sim.Broker import Broker
+from models.conf.Symbol import Symbol
+
 """
 The primary sim
 """
@@ -60,11 +62,27 @@ class Sim():
         """
         deltaTimeSlices = endDate - startDate
 
+        ##Generate ticker list dict
+        tickerListDict = self.generateTickerListDict(tickerList)
+
         for i in range(deltaTimeSlices.days + 1):
             iterDateTime = startDate + datetime.timedelta(i)
             if(i == 0):
-                newTimeSlice = TimeSlice(tickerList, startDate, iterDateTime, None)
+                newTimeSlice = TimeSlice(tickerListDict, startDate, iterDateTime, None)
             else:
-                newTimeSlice = TimeSlice(tickerList, startDate, iterDateTime, self.timeSlices[-1])
+                newTimeSlice = TimeSlice(tickerListDict, startDate, iterDateTime, self.timeSlices[-1])
             self.timeSlices.append(newTimeSlice)        
+
+    def generateTickerListDict(self, tickerList : [str]):
+        returnDict = {}
+
+        for i in tickerList:
+            assetSymbol = Symbol.objects(ticker=i)[0]
+            data = assetSymbol.yHistoricalData.historicalData
+            returnDict[i] = {
+                "Symbol" : assetSymbol,
+                "HistoricalData" : data
+            }
+
+        return returnDict
     
