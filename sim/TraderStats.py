@@ -2,7 +2,10 @@ import pandas as pd
 
 class TraderStats():
 
-
+    '''
+    helper class used to keep track of what a trader
+    does and what their values are by time slice
+    '''
     def __init__(self):
         self.portfolioValueByTimeSlice = {}
 

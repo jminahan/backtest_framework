@@ -9,7 +9,6 @@ The primary sim
 """
 class Sim():
     ## Stepping through the TimeSlices will be like progressing through time
-        ## objective : avoid look ahead bias
     timeSlices : [TimeSlice] = []
     traders : [Trader] = []
     broker : Broker = None
@@ -17,15 +16,17 @@ class Sim():
     startDate : datetime.datetime = None
     endDate : datetime.datetime = None
     tickerList : [str] = None
+
     def __init__(self, tickerList : [str],
                     startDate : datetime.datetime,
                     endDate : datetime.datetime,
-                    listOfStrategies,
+                    listOfTradersProfiles,
                     interval : str = "1d"):
         """
         tickerList : the tickers you want to be presented as an asset to trade
         startDate : datetime of start date
         endDate : datetime of end date
+        listOfTradersProfiles : comes in the form of [{strategy : allocation}]
         interval : str of interval - currently only support 1d
         """
         self.startDate = startDate
@@ -33,7 +34,7 @@ class Sim():
         self.tickerList = tickerList
 
         self.initTimeSlices(tickerList, startDate, endDate, interval)
-        self.initTraders(listOfStrategies)
+        self.initTraders(listOfTradersProfiles)
         self.broker = Broker(self.timeSlices[0], self.traders)
 
     def run(self, callBack):
@@ -46,20 +47,29 @@ class Sim():
         for t in self.traders:
             t.finalUpdateStats()
 
-    def initTraders(self, listOfStrategies):
-        for i in listOfStrategies:
+    '''
+    initialize traders with listOfTradersProfiles parameter
+    also pass each strategy in each dict the sim (used to 
+    reference broker for values))
+    '''
+    def initTraders(self, listOfTradersProfiles):
+        for i in listOfTradersProfiles:
             newTrader = Trader(i)
             self.traders.append(newTrader)
-            i.trader = newTrader
-            i.sim = self
+            newTrader.sim = self
+            for t in i.keys():
+                t.sim = self
 
+    '''
+    Init time slices
+    loads historical data into each time slice
+    between start and end time
+    '''
     def initTimeSlices(self, tickerList : [str],
                             startDate : datetime.datetime,
                             endDate : datetime.datetime,
                             interval : str = "1d"):
-        """
-        init time slices
-        """
+
         deltaTimeSlices = endDate - startDate
 
         ##Generate ticker list dict
@@ -73,6 +83,10 @@ class Sim():
                 newTimeSlice = TimeSlice(tickerListDict, startDate, iterDateTime, self.timeSlices[-1])
             self.timeSlices.append(newTimeSlice)        
 
+    '''
+    helper method to pull historical data once instead
+    of on every time slice
+    '''
     def generateTickerListDict(self, tickerList : [str]):
         returnDict = {}
 

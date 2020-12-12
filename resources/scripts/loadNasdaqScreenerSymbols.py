@@ -3,7 +3,7 @@ from utils.src.modelbuilder.SymbolBuilder import SymbolBuilder;
 from utils.src.mongointerface.mongointerface import MongoInterface
 import utils.consts as consts
 from resources.scripts.Script import Script
-
+from utils.src.mongointerface.modelutils.SymbolMongoInterface import SymbolMongoInterface
 
 class LoadNasdaqScreenerSymbols(Script):
     def __init__(self):
@@ -23,4 +23,6 @@ class LoadNasdaqScreenerSymbols(Script):
         monInterface = MongoInterface(params)
         nasdaqDF = pdInterface.fileToDf("resources/nasdaq_screener.csv")
         symbols = symbolBuilder.buildFromNasdaqDf(nasdaqDF)
+        symbolsInSystem = SymbolMongoInterface.getSymbols()
+        symbols = symbols - symbolsInSystems
         monInterface.saveDocuments(symbols)

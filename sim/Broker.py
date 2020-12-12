@@ -5,13 +5,25 @@ from sim.Trader import Trader
 from sim.Asset import Asset
 from utils.src.sim.SimUtils import SimUtils
 
+'''
+This class acts kind of as the gateway to info for
+a trader in a current time slice
+'''
 class Broker():
 
+    ## current time slice - updated by sim
     currentTimeSlice : TimeSlice = None
+
+    ##list of traders
     traders : [Trader] = []
 
+    ##trade queue in case a trade is placed on
+    ## a non-trading day
     tradeQueue : {} = {}
 
+    '''
+    initialize values of params
+    '''
     def __init__(self, initTimeSlice : TimeSlice, traders : [Trader]) :
         self.currentTimeSlice = initTimeSlice
         self.traders = traders
@@ -44,7 +56,9 @@ class Broker():
         else:
             self.tradeQueue[trader].append(trade)
             
-
+    '''
+    for each trade, call take trade
+    '''
     def takeTrades(self, trades : [Trade], trader : Trader):
         for i in trades:
             self.takeTrade(i, trader)
@@ -92,6 +106,11 @@ class Broker():
         else:
             raise Exception("Started on a not trading day")
 
+    '''
+    called on a trading day after a non-trading day
+
+    If theres trades, address in order that they arrived
+    '''
     def addressQueue(self):
         if(SimUtils.isTradingDay(self.currentTimeSlice)):
             for trader in self.tradeQueue.keys():

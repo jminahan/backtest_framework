@@ -14,29 +14,30 @@ class BuyAndHoldSpecific(Strategy):
     sim = None
     title = None
     ticker = None
-    trader : Trader = None
 
+    """
+    This strategy will buy all of one stock on opening day
+    and close all of one stock on closing day
+    """
     def __init__(self,ticker : str, 
                     title : str):
         self.title = title
         self.ticker = ticker
 
+    '''
+    should return a dict in the form of:
+        {
+            ticker : signal
+        }
+
+        where ticker is in the universe and signal is
+        between -1 and 1.  This will then be rebalanced by trader
+        that owns this strategy
+    '''
     def getTradeSignals(self, currentTimeSlice : TimeSlice):
         retSignals = []
         if(currentTimeSlice.currentTime == self.sim.startDate):
-            retSignals.append(self.generateBuySignal(currentTimeSlice))
+            retSignals.append({self.ticker : 1.0})
         elif(currentTimeSlice.currentTime == self.sim.endDate):
-            sellSignal = self.generateSellSignal()
-            if(sellSignal):
-                retSignals.append(sellSignal)
+            retSignals.append({self.ticker : -1.0})
         return retSignals
-
-    def generateBuySignal(self,currentTimeSlice : TimeSlice):
-        closeValueOfStock = currentTimeSlice.assets[self.ticker].historicalData.loc[currentTimeSlice.getKeyString()]["Close"]
-        amt = self.trader.cash // closeValueOfStock
-        return Trade(consts.TRADE_BUY, self.ticker, amt)
-
-    def generateSellSignal(self):
-        amt = self.trader.positions[self.ticker]
-        if(amt):
-            return Trade(consts.TRADE_SELL, self.ticker, amt)

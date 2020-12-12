@@ -66,7 +66,7 @@ class Main(Script):
         This is passed as a callback in run
         and is called once per trader per timestep
         """
-        broker.takeTrades(trader.strat.getTradeSignals(currentTimeSlice), trader)
+        broker.takeTrades(trader.getTradeRequests(currentTimeSlice), trader)
 
     def initializeConfigurationOptions(self):
         self.params = {
@@ -84,7 +84,7 @@ class Main(Script):
             LoadNasdaqScreenerSymbols : False,
             PullYahooFinancialHistoricalDataForSymbols : False,
             PlotTest : False,
-            LoadIndividualStocks : False
+            LoadIndividualStocks : True
         }
 
     def initializeLocalVars(self):
@@ -96,11 +96,13 @@ class Main(Script):
         self.yhDataBuilder = YahooHistoricalDataBuilder()
         self.symbolBuilder = SymbolBuilder()
         self.monInterface = MongoInterface(self.params)
-        self.symbolMongoInterface = SymbolMongoInterface(self.monInterface)
+        self.symbolMongoInterface = SymbolMongoInterface()
 
-        self.strategies : [Strategy] = [
-                                        BuyAndHoldSpecific("SPY", consts.BUY_AND_HOLD_SPECIFIC_TITLE),
-                                        BuyAndHoldSpecific("AAPL", consts.BUY_AND_HOLD_SPECIFIC_TITLE)
+        self.strategies  =  [
+                                        {BuyAndHoldSpecific("AAPL", consts.BUY_AND_HOLD_SPECIFIC_TITLE): .5,
+                                            BuyAndHoldSpecific("SPY", consts.BUY_AND_HOLD_SPECIFIC_TITLE): .5},
+                                        {BuyAndHoldSpecific("AAPL", consts.BUY_AND_HOLD_SPECIFIC_TITLE) : .5,
+                                            BuyAndHoldSpecific("SPY", consts.BUY_AND_HOLD_SPECIFIC_TITLE) : .5}
                                         ]
 
         self.sim = Sim(

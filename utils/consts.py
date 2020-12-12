@@ -24,9 +24,9 @@ DEFAULT_YAHOO_HISTORICAL_END_DATE = 9607126400
 ###Sim Vars
 
 ##Sim Run params
-SIM_PARAMS_TICKER_LIST = ["AAPL","SPY"]
-SIM_PARAMS_START_DATE = datetime.datetime(2015, 1, 5)
-SIM_PARAMS_END_DATE =  datetime.datetime(2020, 1, 10)
+SIM_PARAMS_TICKER_LIST = ["AAPL", "SPY"]
+SIM_PARAMS_START_DATE = datetime.datetime(2020, 11, 2)
+SIM_PARAMS_END_DATE =  datetime.datetime(2020, 11, 27)
 
 ##Trade types
 TRADE_BUY = "BUY_SIGNAL"

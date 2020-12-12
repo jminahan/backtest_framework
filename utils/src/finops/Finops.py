@@ -27,7 +27,7 @@ class Finops():
         excessReturnStdDev = dfExcessReturns.std(0)
         returns = (dfStrat["Close"][-1] - dfStrat["Close"][1]) / dfStrat["Close"][1]
 
-        return returns/(excessReturnsStdDev["Close"])
+        return returns/(excessReturnStdDev["Close"])
 
     @staticmethod
     def calculateBeta(dfStrat : pd.DataFrame, dfBenchMark : pd.DataFrame) -> float:
