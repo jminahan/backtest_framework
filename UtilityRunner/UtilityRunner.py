@@ -3,12 +3,16 @@ import logging
 from .UtilityScripts.ExampleUtilityScript import ExampleUtilityScript
 import sys
 from .UtilityScripts.Exceptions import TooManyInputFiles
+from .UtilityScripts.PopulateYahooScript import PopulateYahooScript
+from .UtilityScripts.LoadNasdaqTickers import LoadNasdaqTickers
 
 logging.basicConfig(level=logging.DEBUG)
 
 
 utilityScripts = [
-    ExampleUtilityScript()
+    ExampleUtilityScript(),
+    PopulateYahooScript(),
+    LoadNasdaqTickers()
 ]
 
 

@@ -1,0 +1,8 @@
+{
+    "DB_CONNECTION": "test",
+    "DB_HOST": "localhost",
+    "DB_PORT" : 27017,
+    "DEFAULT_YAHOO_HISTORICAL_START_DATE" : 0,
+    "DEFAULT_YAHOO_HISTORICAL_END_DATE" : 9607126400,
+    "outputFile" : "/home/minahanj/Documents/Projects/backtest_framework/Resources/UtilityScriptSettings/YahooPopulateScript/output.json"
+}

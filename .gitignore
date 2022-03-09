@@ -68,6 +68,8 @@ instance/
 # Scrapy stuff:
 .scrapy
 
+.~lock.tasks.ods#
+
 # Sphinx documentation
 docs/_build/
 

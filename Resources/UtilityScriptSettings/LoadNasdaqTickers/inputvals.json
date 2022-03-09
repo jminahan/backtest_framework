@@ -1,0 +1,6 @@
+{
+    "pathToCsv":"/home/minahanj/Documents/Projects/backtest_framework/Resources/UtilityScriptSettings/LoadNasdaqTickers/nasdaq.csv",
+    "DB_CONNECTION": "test",
+    "DB_HOST": "localhost",
+    "DB_PORT" : 27017
+}

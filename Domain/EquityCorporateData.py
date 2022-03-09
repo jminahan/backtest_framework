@@ -1,11 +1,15 @@
 from matplotlib import ticker
-from mongoengine import Document, StringField, DateTimeField
+from mongoengine import Document, StringField, DateField
+from sympy import E
 from .BuildEnumMethods import BuildEnumMethods
+import pandas as pd
+import datetime
+
 
 class EquityCorporateData(Document):
     ticker : StringField = StringField(required=True)
     commonCompanyName : StringField = StringField(required=True)
-    ipoYear : DateTimeField = DateTimeField(required=True)
+    ipoYear : DateField = DateField(required=True)
     industry : StringField = StringField(required=True)
     sector : StringField= StringField(required=True)
     country : StringField = StringField(required=True)
@@ -23,40 +27,79 @@ class EquityCorporateData(Document):
             "country" : self.country,
         }
 
-    def build(self, method : BuildEnumMethods, **kwargs):
+    @staticmethod
+    def build(method : BuildEnumMethods, **kwargs) :
         if(method == BuildEnumMethods.MANUAL):
-            self.manualBuild(kwargs)
+            return EquityCorporateData.manualBuild(kwargs)
         elif(method == BuildEnumMethods.DICT):
-            self.dictbuild(kwargs)
+            return EquityCorporateData.dictbuild(kwargs)
+        elif(method == BuildEnumMethods.DF):
+            return EquityCorporateData.dfBuild(kwargs["DF"])
 
-    def manualBuild(self, kwargs):
-        self.ticker = kwargs["ticker"]
-        self.commonCompanyName = kwargs["commonCompanyName"]
-        self.ipoYear = kwargs["ipoYear"]
-        self.industry = kwargs["industry"]
-        self.sector = kwargs["sector"]
-        self.country = kwargs["country"]
+    @staticmethod
+    def dfBuild(nasdaqDf : pd.DataFrame):
+        returnArray = []
+        for index, row in nasdaqDf.iterrows():
+            ##todo there has to be a better way
+            if(pd.notna(row["Symbol"]) and 
+                pd.notna(row["Name"]) and
+                pd.notna(row["Market Cap"]) and
+                pd.notna(row["Country"]) and 
+                pd.notna(row["IPO Year"]) and
+                pd.notna(row["Sector"]) and
+                pd.notna(row["Industry"])):
+                returnArray.append(
+                    EquityCorporateData.build(method=BuildEnumMethods.MANUAL,
+                        ticker = row["Symbol"],
+                        yHistoricalData = None,
+                        lastUpdate = datetime.datetime.now(),
+                        commonCompanyName = row["Name"],
+                        ipoYear = str(int(row["IPO Year"])) + "-01-01",
+                        industry = row["Industry"],
+                        sector = row["Sector"],
+                        country = row["Country"],
+                        marketCap = row["Market Cap"]
+                    )
+                )
 
-        if(self.ticker is None or
-            self.commonCompanyName is None or
-            self.ipoYear is None or
-            self.industry is None or
-            self.sector is None or
-            self.country is None):
+        return returnArray
+
+    def manualBuild(kwargs):
+        equity = EquityCorporateData()
+        equity.ticker = kwargs["ticker"]
+        equity.commonCompanyName = kwargs["commonCompanyName"]
+        equity.ipoYear = kwargs["ipoYear"]
+        equity.industry = kwargs["industry"]
+        equity.sector = kwargs["sector"]
+        equity.country = kwargs["country"]
+
+        if(equity.ticker is None or
+            equity.commonCompanyName is None or
+            equity.ipoYear is None or
+            equity.industry is None or
+            equity.sector is None or
+            equity.country is None):
             raise Exception("Missing fields in an EquityCorporateData object Manual Build Method")
 
-    def dictBuild(self, **kwargs):
-        self.ticker = kwargs["dict"]["ticker"]
-        self.commonCompanyName = kwargs["dict"]["commonCompanyName"]
-        self.ipoYear = kwargs["dict"]["ipoYear"]
-        self.industry = kwargs["dict"]["industry"]
-        self.sector = kwargs["dict"]["sector"]
-        self.country = kwargs["dict"]["country"]
+        return equity
 
-        if(self.ticker is None or
-            self.commonCompanyName is None or
-            self.ipoYear is None or
-            self.industry is None or
-            self.sector is None or
-            self.country is None):
+    @staticmethod
+    def dictBuild(kwargs):
+
+        equity = EquityCorporateData()
+        
+        equity.ticker = kwargs["dict"]["ticker"]
+        equity.commonCompanyName = kwargs["dict"]["commonCompanyName"]
+        equity.ipoYear = kwargs["dict"]["ipoYear"]
+        equity.industry = kwargs["dict"]["industry"]
+        equity.sector = kwargs["dict"]["sector"]
+        equity.country = kwargs["dict"]["country"]
+
+        if(equity.ticker is None or
+            equity.commonCompanyName is None or
+            equity.ipoYear is None or
+            equity.industry is None or
+            equity.sector is None or
+            equity.country is None):
             raise Exception("Missing fields in an EquityCorporateData object Dict Build Method")
+        return equity
