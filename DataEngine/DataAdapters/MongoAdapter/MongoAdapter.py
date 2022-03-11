@@ -36,7 +36,7 @@ class MongoAdapter(BaseAdapter):
         return EquityCorporateData.objects(ticker=universe).first()
 
 
-    def getCorporateInfos(self, universe : [String]) -> [EquityCorporateData]:
+    def getCorporateInfos(self, universe : [str]) -> [EquityCorporateData]:
         """
             description:
                 get multiple corporate datas
@@ -49,8 +49,19 @@ class MongoAdapter(BaseAdapter):
         """
         return EquityCorporateData.objects(ticker__in=universe)
 
+    def getDataForDateRange(self, startDate: datetime.datetime, endDate: datetime.datetime, universe : [str]):
+        dayDf = pandas.DataFrame()
+        equityObjects = self.getCorporateInfos(universe)
+        for equity in equityObjects:
+            historicalForEquity : HistoricalData = HistoricalData.objects(associatedEquity=equity).first()
+            if(historicalForEquity is not None):
+                historicalPriceDataFrame = historicalForEquity.historicalData
+                priceForTickers = historicalPriceDataFrame.set_index("Date").loc[startDate : endDate]
+                priceForTickers["ticker"] = equity.ticker
+                dayDf = dayDf.append(priceForTickers)
+        return dayDf
 
-    def getDataForDate(self, date : datetime.datetime, universe : [String]) :
+    def getDataForDate(self, date : datetime.datetime, universe : [str]) :
         """
             params:
                 date you are intereste in received values for

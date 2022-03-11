@@ -34,7 +34,17 @@ def getDataForDate():
     retDf = ma.getDataForDate("2020-01-30", ["AAPL", "A"])
     assert(retDf.loc[retDf["ticker"] == "AAPL"]["Close"][0] == 84.379997)
 
+def getDataForDates():
+    """
+        This test assumes you have a fully loaded database
+
+        Or at least a database with the following ticker in it with some data for that date
+    """
+    retDf = ma.getDataForDateRange("2020-01-01", "2020-01-30", ["AAPL", "A"])
+    assert(retDf.loc[retDf["ticker"] == "AAPL"]["Open"][2] == 73.447502)
+
 testConnect()
 testSaveEquityCorporateDataDocument()
 testRemoveEquityCorporateDataDocument()
 getDataForDate()
+getDataForDates()
