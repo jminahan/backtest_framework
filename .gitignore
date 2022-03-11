@@ -75,6 +75,8 @@ docs/_build/
 .pybuilder/
 target/
 
+.~lock.tasks.ods#
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
