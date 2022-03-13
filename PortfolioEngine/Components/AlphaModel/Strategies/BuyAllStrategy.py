@@ -1,3 +1,4 @@
+from PortfolioEngine.Components.Portfolio import Portfolio
 from PortfolioEngine.Components.Indicator import Indicator
 from PortfolioEngine.Components.AlphaModel.Strategies.BaseStrategy import BaseStrategy
 from pandas import DataFrame

@@ -4,7 +4,7 @@ from PortfolioEngine.Components.Indicator import Indicator
 import logging
 
 class BaseStrategy(ABC):
-    def __init__(self):
+    def __init__(self, ):
         pass
 
     @abstractmethod

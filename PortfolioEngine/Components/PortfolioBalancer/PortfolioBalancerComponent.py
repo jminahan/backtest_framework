@@ -18,4 +18,4 @@ class PortfolioBalancerComponent():
             self.balanceMethod = EvenSplitBalancingStrategy()
 
     def getBalancedPortfolio(self, indics: [Indicator]) -> Portfolio:
-        return self.balanceMethod.generateBalancedPortfolio(indics)
+        return self.balanceMethod.generateBalancedPortfolio(indics, self.engineRef.accountant.getFreeCapital())

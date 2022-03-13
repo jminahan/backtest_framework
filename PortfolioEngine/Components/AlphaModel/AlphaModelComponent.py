@@ -23,12 +23,12 @@ class AlphaModelComponent():
         todayDate = self.engineRef.market.adapter.getCurrentDate()
 
         if(AlphaModelStrategiesDTOEnum.BUYALL in stratNames):
-            self.strategies.append(BuyAllStrategy(self.engineRef.market.adapter.getCurrentMarketData()))
+            self.strategies.append(BuyAllStrategy(self.engineRef.getCurrentPortfolio()))
 
     def collectIndicators(self) -> [Indicator]:
         retIndics = []
         for i in self.strategies:
-            indic : Indicator = i.collectIndicator()
+            indic : Indicator = i.collectIndicator(self.engineRef.market.adapter.getCurrentMarketData())
             indic.validateIndicator()
             retIndics.append(indic)
 

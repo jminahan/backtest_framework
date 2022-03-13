@@ -10,7 +10,20 @@ class BaseTransactionCostModel(ABC):
     def getTradeSchedule(self, oldPortfolio : Portfolio, newPortfolio : Portfolio) -> dict:
         logging.error("Error, unfilled abstract method")\
 
-    def calculatePortfolioDifferences(self, oldPortfolio : Portfolio, newPortfolio : Portfolio) -> dict:
+    def calculatePortfolioDifferences(self, oldPortfolio : Portfolio, newPortfolio : Portfolio, totalCapital : int) -> dict:
+        """
+            Params:
+                Old portfolio - existing asset allocations
+                new portfolio - calculated as newly balanced portfolio given updated conditions
+
+            returns:
+                a dict in the following form:
+                    { "ticker 1" : 20,
+                       "ticker 2" : -2
+                    }
+
+                This is to be interpreted as "for the old portfolio to become the new portfolio, buy 20 ticker 1, and sell 2 ticker 2"
+        """
         tickers = set()
         tickers.add(oldPortfolio.tickerDistr.keys)
         tickers.add(newPortfolio.tickerDistr.keys)

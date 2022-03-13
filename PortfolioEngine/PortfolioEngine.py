@@ -1,3 +1,4 @@
+from AccountantManager.AccountantManager import AccountantManager
 from PortfolioEngine.Components.Portfolio import Portfolio
 from sys import executable
 from boto import config
@@ -24,6 +25,7 @@ class PortfolioEngine():
     transactionCostModel : TransactionCostModelComponent
     adapter : BaseAdapter
     market : MarketManager
+    accountant : AccountantManager
 
     def __init__(self, universe : [str], configs : PortfolioEngineConfigDTO):
         self.universe = universe
@@ -32,12 +34,16 @@ class PortfolioEngine():
     def registerMarketManager(self, market : MarketManager) -> None:
         self.market = market
 
+    def registerAccountantManager(self, accountant : AccountantManager) -> None:
+        self.accountant = accountant
+
     def initializeComponents(self, configs : PortfolioEngineConfigDTO):
-        self.alphaModel = AlphaModelComponent(configs.alphaModelConfigs)
-        self.portfolioBalancer = PortfolioBalancerComponent(configs.portfolioBalancerConfigs)
-        self.transactionCostModel = TransactionCostModelComponent(configs.transactionModelConfigs)
         self.adapter = self.initializeAdapter(configs)
         self.adapter.initializeCurrentPortfolio()
+
+        self.alphaModel = AlphaModelComponent(configs.alphaModelConfigs, self)
+        self.portfolioBalancer = PortfolioBalancerComponent(configs.portfolioBalancerConfigs, self)
+        self.transactionCostModel = TransactionCostModelComponent(configs.transactionModelConfigs, self)
 
     def initializeAdapter(self, configs : PortfolioEngineConfigDTO):
         if(self.config.adapterType == AdapterType.MONGO):

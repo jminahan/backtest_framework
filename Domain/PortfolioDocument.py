@@ -34,6 +34,6 @@ class PortfolioDocument(Document):
 
     def toPortfolio(self) -> Portfolio:
         port = Portfolio()
-        port.tickerDistr = self.portfolioDict
+        port.tickerAmounts = self.portfolioDict
 
         return port
