@@ -1,3 +1,5 @@
+from Domain.OrderModels.Contract import Contract
+from Domain.OrderModels.Order import Order
 from dataclasses import dataclass
 
 
@@ -12,3 +14,5 @@ class OrderStatuses(Enum):
 class OrderStatus():
     status : str
     cost : int
+    order : Order
+    contract : Contract

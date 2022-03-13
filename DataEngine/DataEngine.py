@@ -1,7 +1,7 @@
 from DataEngine.DataAdapters.MongoAdapter.MongoAdapter import MongoAdapter
 import logging
-from domain.DTO.DataEngineConfigDTO import DataEngineConfigDTO, AdapterType
-from .DataAdapters.BaseAdapter.BaseAdapter import BaseAdapter
+from Domain.DTO.DataEngineConfigDTO import DataEngineConfigDTO, AdapterType
+from DataEngine.DataAdapters.BaseAdapter.BaseAdapter import BaseAdapter
 
 def DataEngine():
     config : DataEngineConfigDTO

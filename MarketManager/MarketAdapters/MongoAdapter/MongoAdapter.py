@@ -14,12 +14,12 @@ class MongoAdapter(BaseAdapter):
     
     def __init__(self, dataEngine : DataEngineAdapter, date : datetime.datetime, universe : [str]):
         self.super(dataEngine, date, universe)
-        self.ingestDataForCurrentDate(date)
+        self.fetchDataForCurrentDate(date)
 
     def fetchDataForCurrentDate(self, date : datetime.datetime) -> None:
         self.ingestDataForToday(super().dataEngineAdapter.getDataForDate(date))
 
-    def ingestDataForToday(self, date: datetime.datetime) -> None:
+    def ingestDataForToday(self, date : datetime.datetime) -> None:
         super().dayOfMarket = super().dataEngineAdapter.getDataForDate(date, self.universe)
 
     def getCurrentMarketData(self) -> DataFrame:
@@ -38,12 +38,16 @@ class MongoAdapter(BaseAdapter):
         instrumentDf = super().dayOfMarket.loc(super().dayOfMarket["ticker" == contract.symbol])
         if(instrumentDf is not None):
             return OrderStatus(
-                cost=instrumentDf["Close"][0] * order.total_quantity,
-                status = OrderStatuses.FILLED)
+                cost=instrumentDf["Open"][0] * order.total_quantity,
+                status = OrderStatuses.FILLED,
+                contract = contract,
+                order = order)
         else:
             return OrderStatus(
                 cost=0,
-                status=OrderStatuses.UNFILLED
+                status=OrderStatuses.UNFILLED,
+                contract = contract,
+                order = order)
             )
 
     def getCorporateInfos(self) -> [EquityCorporateData]:
