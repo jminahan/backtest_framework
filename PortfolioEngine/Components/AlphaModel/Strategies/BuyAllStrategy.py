@@ -10,7 +10,7 @@ class BuyAllStrategy(BaseStrategy):
     def collectIndicator(self, dataDF: DataFrame) -> Indicator:
         indic = Indicator()
 
-        distribute = 100 / dataDF.__len__
+        distribute = 100 / dataDF.__len__()
         for key in dataDF["ticker"]:
             indic.indicators[key] = distribute
         

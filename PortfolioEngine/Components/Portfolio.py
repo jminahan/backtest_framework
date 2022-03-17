@@ -1,5 +1,5 @@
-from h11 import Data
 from pandas import DataFrame
+import logging
 
 class Portfolio():
     """
@@ -10,14 +10,20 @@ class Portfolio():
     """
     tickerAmounts : dict
     def __init__(self):
-        pass
+        self.tickerAmounts = {}
+
+    def getAllocation(self, ticker : str) -> float:
+        if(ticker in self.tickerAmounts):
+            return self.tickerAmounts[ticker]
+
+        return 0
 
     def getAllocatedCapital(self, dayDF : DataFrame, freeCapital : float = 0) -> float:
         allocationOfCapital : float = 0
-        tickersInDay : DataFrame = dayDF["tickers"]
+        tickersInDay : DataFrame = dayDF["ticke"]
         for t in self.tickerAmounts:
             if(t in tickersInDay):
-                tickerAmount = dayDF.loc[dayDF["tickers"]==t]["Open"] * self.tickerAmounts[t]
+                tickerAmount = dayDF.loc[dayDF["ticker"]==t]["Open"] * self.tickerAmounts[t]
                 allocationOfCapital += tickerAmount
             else:
                 raise Exception ("Ticker of Portfolio not found in DataFrame")
@@ -27,10 +33,10 @@ class Portfolio():
 
     def getCapital(self, dayDF : DataFrame, freeCapital : float) -> float:
         allocationOfCapital : float = 0
-        tickersInDay : DataFrame = dayDF["tickers"]
+        tickersInDay : list = dayDF["ticker"].tolist()
         for t in self.tickerAmounts:
             if(t in tickersInDay):
-                tickerAmount = dayDF.loc[dayDF["tickers"]==t]["Open"] * self.tickerAmounts[t]
+                tickerAmount = dayDF.loc[dayDF["ticker"]==t]["Open"] * self.tickerAmounts[t]
                 allocationOfCapital += tickerAmount
             else:
                 raise Exception ("Ticker of Portfolio not found in DataFrame")
@@ -39,7 +45,7 @@ class Portfolio():
         return allocationOfCapital
 
 
-    def tickerDistrAllocatedCapital(self, dayDF : DateFrame, freeCapital : float = 0) -> dict:
+    def tickerDistrAllocatedCapital(self, dayDF, freeCapital : float = 0) -> dict:
         """
             This method should give the distribution of allocated capital according
             current market conditions
@@ -57,7 +63,7 @@ class Portfolio():
         tickersInDay : DataFrame = dayDF["tickers"]
         for t in self.tickerAmounts:
             if(t in tickersInDay):
-                tickerAmount = dayDF.loc[dayDF["tickers"]==t]["Open"] * self.tickerAmounts[t]
+                tickerAmount = dayDF.loc[dayDF["ticker"]==t]["Open"] * self.tickerAmounts[t]
                 tickerDistr[t] = tickerAmount
                 allocationOfCapital += tickerAmount
             else:
@@ -76,3 +82,7 @@ class Portfolio():
             meaning this will return the same as tickerDistrAllocatedCapital if you have no free capital
         """
         return self.tickerDistrAllocatedCapital(dayDF, freeCapital)
+
+    def deepCopy(self, doc):
+        for key, value in doc.tickerDistr.items():
+            self.tickerAmounts[key] = value

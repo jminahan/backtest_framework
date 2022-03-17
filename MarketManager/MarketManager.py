@@ -9,22 +9,27 @@ import datetime
 from Domain.OrderModels.Order import Order
 from Domain.OrderModels.Contract import Contract
 
-def MarketManager():
+class MarketManager():
     config : MarketManagerConfigDTO
     adapter : BaseAdapter
     dataEngineAdapter : DataEngineAdapter
 
     def __init__(self, marketManagerConfigDTO : MarketManagerConfigDTO, 
                     dataEngineAdapter : DataEngineAdapter,
-                    date : datetime.datetime):
+                    date : datetime.datetime,
+                    universe : [str]):
         logging.info("Data Engine Initialized")
         marketManagerConfigDTO.validate()
         self.config = marketManagerConfigDTO
+        self.universe = universe
         self.adapter = self.initializeAdapter(dataEngineAdapter, date)
 
-    def initializeAdapter(self, dataEngineAdapter : DataEngineAdapter) -> BaseAdapter:
+    def initializeAdapter(self, dataEngineAdapter : DataEngineAdapter, date : datetime.datetime) -> BaseAdapter:
         if(self.config.adapterType == AdapterType.MONGO):
-            return MongoAdapter(dataEngineAdapter)
+            return MongoAdapter(dataEngineAdapter, date=date, universe =self.universe)
 
-    def placeOrder(self, order : Order, contract : Contract) -> OrderStatus:
-        return self.adapter.placeOrder(order, contract)
+    def placeOrder(self, order : Order, contract : Contract, callback) -> OrderStatus:
+        callback(self.adapter.placeOrder(order, contract))
+
+    def getCurrentData(self):
+            return self.adapter.getData()

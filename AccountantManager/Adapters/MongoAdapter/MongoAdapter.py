@@ -5,8 +5,8 @@ class DefaultProfile():
 
 class MongoAdapter(BaseAdapter):
     def __init__(self):
-        self.super()
+        super().__init__()
         self.initializeProfile()
 
     def initializeProfile(self):
-        self.super().freeCapital = DefaultProfile().INITIAL_FREE_CAPITAL
+        self.freeCapital = DefaultProfile().INITIAL_FREE_CAPITAL

@@ -8,3 +8,6 @@ class BaseAdapter(ABC):
     
     def getFreeCapital(self) -> float:
         return self.freeCapital
+
+    def adjustFreeCapital(self, change : float):
+        self.freeCapital += change

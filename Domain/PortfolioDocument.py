@@ -4,9 +4,8 @@ from PortfolioEngine.Components.Portfolio import Portfolio
 
 
 class PortfolioDocument(Document):
-    def __init__(self):
-        tickerDistr = DictField(required=True)
-        name = StringField(required=True, unique=True, over)
+    tickerDistr = DictField(required=True)
+    name = StringField(required=True, unique=True)
 
     @staticmethod
     def build(method : BuildEnumMethods, **kwargs) :
@@ -34,6 +33,6 @@ class PortfolioDocument(Document):
 
     def toPortfolio(self) -> Portfolio:
         port = Portfolio()
-        port.tickerAmounts = self.portfolioDict
+        port.tickerAmounts = self.tickerDistr
 
         return port

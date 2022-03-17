@@ -22,26 +22,87 @@ from enum import Enum
 
 class PortfolioEngineConfigDTO():
     def __init__(self, data):
-        self.alphaModelConfigs = AlphaModelConfigDTO(data)
-        self.portfolioBalancerConfigs = PortfolioBalancerConfigDTO(data)
-        self.transactionModelConfigs = TransactionCostModelConfigDTO(data)
-        self.adapterType = data["adapterType"]
+        if(data is not None):
+            self.alphaModelConfigs = AlphaModelConfigDTO(data)
+            self.portfolioBalancerConfigs = PortfolioBalancerConfigDTO(data)
+            self.transactionModelConfigs = TransactionCostModelConfigDTO(data)
+            self.adapterType = data["adapterType"]
+        else:
+            self.alphaModelConfigs = None
+            self.portfolioBalancerConfigs = None
+            self.transactionModelConfigs = None
+            self.adapterType = None
 
     def validate(self):
         if(self.adapterType == None):
             raise Exception("Invalid DataEngineConfigDTO data")
 
+    @staticmethod
+    def fromjson(jsonDict : dict):
+        retConfig = PortfolioEngineConfigDTO(None)
+        retConfig.alphaModelConfigs = AlphaModelConfigDTO.fromjson(jsonDict)
+        retConfig.portfolioBalancerConfigs = PortfolioBalancerConfigDTO.fromjson(jsonDict)
+        retConfig.transactionModelConfigs = TransactionCostModelConfigDTO.fromjson(jsonDict)
+        ##AdapterType
+        if(jsonDict["adapterType"] == "MONGO"):
+            retConfig.adapterType = AdapterType.MONGO
+        elif(jsonDict["adapterType"] == "PAPER"):
+            retConfig.adapterType = AdapterType.MONGO
+        elif(jsonDict["adapterType"] == "LIVE"):
+            retConfig.adapterType = AdapterType.MONGO
+        else:
+            raise Exception("Adapter Type Argument not found valid")
+
+        
+        return retConfig
+
 class AlphaModelConfigDTO():
     def __init__(self, data):
-        self.strategies = data["AlphaModel"]["Strategies"]
+        if(data is not None):
+            self.strategies = data["AlphaModel"]["Strategies"]
+        else:
+            self.strategies = None
+
+
+    @staticmethod
+    def fromjson(data):
+        strats = []
+        retConfig = AlphaModelConfigDTO(None)
+        if("BUYALL" in data["AlphaModel"]["Strategies"]):
+            strats.append(AlphaModelStrategiesDTOEnum.BUYALL)
+
+        retConfig.strategies = strats
+        return retConfig
 
 class PortfolioBalancerConfigDTO():
     def __init__(self, data):
-        self.strategy = data["PortfolioBalancer"]
+        if(data is not None):
+            self.strategy = data["PortfolioBalancer"]
+        else:
+            self.strategy = None
+
+    @staticmethod
+    def fromjson(data):
+        retConfig = PortfolioBalancerConfigDTO(None)
+        if(data["PortfolioBalancer"] == "EVENSPLIT"):
+            retConfig.strategy = PortfolioBalancerStrategiesDTOEnum.EVENSPLIT
+
+        return retConfig
 
 class TransactionCostModelConfigDTO():
     def __init__(self, data):
-        self.strategy = data["TransactionCostModel"]
+        if(data is not None):
+            self.strategy = data["TransactionCostModel"]
+        else:
+            self.strategy = None
+
+    @staticmethod
+    def fromjson(data):
+        retConfig = PortfolioBalancerConfigDTO(None)
+        if(data["TransactionCostModel"] == "ZEROCOST"):
+            retConfig.strategy = TransactionCostModelStrategyDTOEnum.ZEROCOST
+
+        return retConfig
 
 
 class AlphaModelStrategiesDTOEnum(Enum):

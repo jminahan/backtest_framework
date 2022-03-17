@@ -1,4 +1,3 @@
-from PortfolioEngine.PortfolioEngine import PortfolioEngine
 from PortfolioEngine.Components.Indicator import Indicator
 from PortfolioEngine.Components.AlphaModel.Strategies.BuyAllStrategy import BuyAllStrategy
 from PortfolioEngine.Components.AlphaModel.Strategies.BaseStrategy import BaseStrategy
@@ -9,10 +8,9 @@ from Domain.DTO.PortfolioEngineConfigDTO import AlphaModelConfigDTO, AlphaModelS
 from PortfolioEngine.Components.AlphaModel.Strategies.BaseStrategy import BaseStrategy
 
 class AlphaModelComponent():
-    strategies : [BaseStrategy]
-    engineRef : PortfolioEngine
+    strategies : [BaseStrategy] = []
 
-    def __init__(self, configs : AlphaModelConfigDTO, engineRef : PortfolioEngine):
+    def __init__(self, configs : AlphaModelConfigDTO, engineRef):
         self.engineRef = engineRef
         self.initialize(configs)
 
@@ -23,7 +21,7 @@ class AlphaModelComponent():
         todayDate = self.engineRef.market.adapter.getCurrentDate()
 
         if(AlphaModelStrategiesDTOEnum.BUYALL in stratNames):
-            self.strategies.append(BuyAllStrategy(self.engineRef.getCurrentPortfolio()))
+            self.strategies.append(BuyAllStrategy())
 
     def collectIndicators(self) -> [Indicator]:
         retIndics = []

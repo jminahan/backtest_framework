@@ -13,3 +13,6 @@ class AccountantManager():
 
     def getFreeCapital(self) -> float:
         return self.adapter.getFreeCapital()
+
+    def adjustFreeCapital(self, change : float):
+        return self.adapter.adjustFreeCapital(change)

@@ -1,0 +1,9 @@
+{
+    "DATA_ENGINE_CONFIGS": {"adapterType":"MONGO"},
+    "ACCOUNTANT_MANAGER_CONFIGS":  {"adapterType":"MONGO"},
+    "MARKET_MANAGER_CONFIGS":  {"adapterType":"MONGO"},
+    "PORTFOLIO_ENGINE_CONFIGS" :  {"adapterType":"MONGO", "AlphaModel":{"Strategies":["BUYALL"]}, "TransactionCostModel":"ZEROCOST", "PortfolioBalancer":"EVENSPLIT"},
+    "DATE" : "2020-01-30",
+    "UNIVERSE" : ["AAPL", "A", "GOOG"]
+
+}

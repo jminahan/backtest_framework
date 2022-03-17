@@ -3,7 +3,7 @@ import logging
 from Domain.DTO.DataEngineConfigDTO import DataEngineConfigDTO, AdapterType
 from DataEngine.DataAdapters.BaseAdapter.BaseAdapter import BaseAdapter
 
-def DataEngine():
+class DataEngine():
     config : DataEngineConfigDTO
     adapter : BaseAdapter
 

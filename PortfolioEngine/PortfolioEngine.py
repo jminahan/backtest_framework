@@ -1,3 +1,8 @@
+from cmath import log
+from datetime import datetime
+from time import sleep
+
+from sympy import threaded
 from AccountantManager.AccountantManager import AccountantManager
 from PortfolioEngine.Components.Portfolio import Portfolio
 from sys import executable
@@ -14,7 +19,8 @@ from threading import Timer, current_thread
 from Domain.OrderModels.Contract import Contract
 from Domain.OrderModels.Order import Order
 from Domain.OrderModels.OrderStatus import OrderStatus
-from Domain.OrderModels.TradeInfo import TradeInfoplaceOrder
+import logging
+from Domain.OrderModels.TradeInfo import TradeInfo
 
 
 class PortfolioEngine():
@@ -27,8 +33,11 @@ class PortfolioEngine():
     market : MarketManager
     accountant : AccountantManager
 
-    def __init__(self, universe : [str], configs : PortfolioEngineConfigDTO):
+    def __init__(self, universe : [str], configs : PortfolioEngineConfigDTO, market : MarketManager, accountant : AccountantManager):
         self.universe = universe
+        self.configs = configs
+        self.market = market
+        self.accountant = accountant
         self.initializeComponents(configs)
 
     def registerMarketManager(self, market : MarketManager) -> None:
@@ -46,11 +55,11 @@ class PortfolioEngine():
         self.transactionCostModel = TransactionCostModelComponent(configs.transactionModelConfigs, self)
 
     def initializeAdapter(self, configs : PortfolioEngineConfigDTO):
-        if(self.config.adapterType == AdapterType.MONGO):
+        if(self.configs.adapterType == AdapterType.MONGO):
             return MongoAdapter()
 
     def getCurrentPortfolio(self) -> Portfolio:
-        self.adapter.getCurrentPortfolio()
+        return self.adapter.getCurrentPortfolio()
 
     def execute(self):
         self.executeTradeSchedule(self.getOrderSchedules())
@@ -58,7 +67,8 @@ class PortfolioEngine():
     def getOrderSchedules(self) -> dict:
         indicators = self.alphaModel.collectIndicators()
         targetPortfolio = self.portfolioBalancer.getBalancedPortfolio(indicators)
-        orderSchedule = self.transactionCostModel.getOrderSchedule(self.getCurrentPortfolio(), targetPortfolio)
+        orderSchedule = self.transactionCostModel.getTradeSchedule(self.getCurrentPortfolio(), targetPortfolio, self.market.getCurrentData(), self.accountant.getFreeCapital())
+        return orderSchedule
 
     def executeTradeSchedule(self, orderSchedule : dict) -> None:
         """
@@ -71,10 +81,20 @@ class PortfolioEngine():
             tx should be able to be casted to a date time
             ti are trade infos, and should have all the information necessary to request execution of a trade from the MarketManager
         """
-        for key, value in orderSchedule:
+        for key, value in orderSchedule.items():
             for o in value:
-                t = Timer(interval=key, function=self.executeOrder, args=(o))
+                t = Timer(interval=(datetime.strptime(key, "YYYY-MM-DDTHH:MM:SS") - datetime.now()).total_seconds(), function=self.executeTrade, args=([o.tojson()]))
+                t.start()
 
+    def executeTrade(self, tradeinfo : dict) -> None:
+        logging.info("in trade execution")
+        trade = TradeInfo.fromjson(tradeinfo)
+        os : OrderStatus = self.market.placeOrder(trade.contract,trade.order,self.executeTradeCallBack)
 
-    def executeTrade(self, trade : TradeInfo) -> None:
-        os : OrderStatus = self.market.placeOrder(trade.order, trade.contract)
+    def executeTradeCallBack(self, oStatus : OrderStatus):
+        logging.info("In call back")
+        self.accountant.adjustFreeCapital(oStatus.cost)
+        self.adapter.executeTradeCallBack(oStatus)
+
+    def getMarket(self) -> MarketManager:
+        return self.market

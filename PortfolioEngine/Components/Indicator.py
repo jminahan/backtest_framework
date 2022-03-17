@@ -1,6 +1,6 @@
 from optparse import Values
 
-from sqlalchemy import true
+import logging
 
 
 class Indicator():
@@ -11,10 +11,11 @@ class Indicator():
 
     def validateIndicator(self) -> bool:
         sum = 0
-        for key, value in self.indicators:
+        for key in self.indicators:
+            value = self.indicators[key]
             sum += value
 
         if sum == 100:
-            return true
+            return True
 
         raise Exception("Indicator resulted in less than 100 distribution pts")

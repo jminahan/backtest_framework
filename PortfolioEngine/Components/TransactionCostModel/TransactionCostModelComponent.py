@@ -1,15 +1,13 @@
 from PortfolioEngine.Components.TransactionCostModel.TransactionCostModels.ZeroCostTransactionCostModel import ZeroCostTransactionCostModel
 from PortfolioEngine.Components.TransactionCostModel.TransactionCostModels.BaseTransactionCostModel import BaseTransactionCostModel
 from Domain.DTO.PortfolioEngineConfigDTO import TransactionCostModelConfigDTO, TransactionCostModelStrategyDTOEnum
-from PortfolioEngine.PortfolioEngine import PortfolioEngine
 from PortfolioEngine.Components.Portfolio import Portfolio
-
+from pandas import DataFrame
 
 class TransactionCostModelComponent():
-    engineRef : PortfolioEngine
     costModel : BaseTransactionCostModel
 
-    def __init__(self, configs : TransactionCostModelConfigDTO, engineRef : PortfolioEngine):
+    def __init__(self, configs : TransactionCostModelConfigDTO, engineRef):
         self.engineRef = engineRef
         self.initialize(configs)
 
@@ -17,5 +15,5 @@ class TransactionCostModelComponent():
         if(configs.strategy is TransactionCostModelStrategyDTOEnum.ZEROCOST):
             self.costModel = ZeroCostTransactionCostModel()
 
-    def getTradeSchedule(self, oldPortfolio : Portfolio, newPortfolio : Portfolio):
-        self.costModel.getTradeSchedule(oldPortfolio, newPortfolio)
+    def getTradeSchedule(self, oldPortfolio : Portfolio, newPortfolio : Portfolio, dayDF : DataFrame, freeCapital : float) -> dict:
+        return self.costModel.getTradeSchedule(oldPortfolio, newPortfolio, dayDF, freeCapital)

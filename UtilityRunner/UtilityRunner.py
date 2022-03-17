@@ -1,18 +1,19 @@
 from UtilityRunner.UtilityScripts.ExampleUtilityScript import ExampleUtilityScript
 import logging
-from .UtilityScripts.ExampleUtilityScript import ExampleUtilityScript
 import sys
-from .UtilityScripts.Exceptions import TooManyInputFiles
-from .UtilityScripts.PopulateYahooScript import PopulateYahooScript
-from .UtilityScripts.LoadNasdaqTickers import LoadNasdaqTickers
+from UtilityRunner.UtilityScripts.Exceptions.TooManyInputFiles import TooManyInputFiles
+from UtilityRunner.UtilityScripts.PopulateYahooScript import PopulateYahooScript
+from UtilityRunner.UtilityScripts.LoadNasdaqTickers import LoadNasdaqTickers
+from UtilityRunner.UtilityScripts.RunComponentsScript import RunComponentScript
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 utilityScripts = [
     ExampleUtilityScript(),
     PopulateYahooScript(),
-    LoadNasdaqTickers()
+    LoadNasdaqTickers(),
+    RunComponentScript()
 ]
 
 

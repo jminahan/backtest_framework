@@ -1,10 +1,10 @@
+import os
+from Domain.OrderModels.OrderStatus import OrderStatus
 from abc import ABC, abstractmethod
 import logging
 from PortfolioEngine.Components.Portfolio import Portfolio
 
 class BaseAdapter(ABC):
-    currentPortfolio : Portfolio
-
     def __init__(self):
         pass
 
@@ -16,5 +16,11 @@ class BaseAdapter(ABC):
     def savePortfolio(self):
         logging.error("Unimplemented method")
 
+    @abstractmethod
+    def executeTradeCallBack(self, oStatus : OrderStatus):
+        logging.error("Unimplemented method")
+
+
+    @abstractmethod
     def getCurrentPortfolio(self) -> Portfolio:
-        return self.currentPortfolio
+        logging.error("Unimplemented method")

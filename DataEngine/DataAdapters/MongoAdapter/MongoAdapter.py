@@ -73,7 +73,9 @@ class MongoAdapter(BaseAdapter):
             historicalForEquity : HistoricalData = HistoricalData.objects(associatedEquity=equity).first()
             if(historicalForEquity is not None):
                 historicalPriceDataFrame = historicalForEquity.historicalData
-                dayDf = dayDf.append(historicalPriceDataFrame.set_index("Date").loc[date])
+                historicalPriceDataFrame.set_index("Date", inplace=True)
+                logging.error(date)
+                dayDf = dayDf.append(historicalPriceDataFrame.loc[date])
         dayDf["ticker"] = universe
         return dayDf
         

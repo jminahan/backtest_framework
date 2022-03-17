@@ -13,29 +13,32 @@ from Domain.EquityCorporateData import EquityCorporateData
 class MongoAdapter(BaseAdapter):
     
     def __init__(self, dataEngine : DataEngineAdapter, date : datetime.datetime, universe : [str]):
-        self.super(dataEngine, date, universe)
+        super().__init__(dataEngine, date, universe)
         self.fetchDataForCurrentDate(date)
 
     def fetchDataForCurrentDate(self, date : datetime.datetime) -> None:
-        self.ingestDataForToday(super().dataEngineAdapter.getDataForDate(date))
+        self.ingestDataForToday(self.dataEngineAdapter.getDataForDate(date, self.universe))
 
-    def ingestDataForToday(self, date : datetime.datetime) -> None:
-        super().dayOfMarket = super().dataEngineAdapter.getDataForDate(date, self.universe)
+    def ingestDataForToday(self, incoming_data : DataFrame) -> None:
+        self.dayOfMarket = incoming_data
 
     def getCurrentMarketData(self) -> DataFrame:
-        return super().dayOfMarket
+        return self.dayOfMarket
+
+    def getData(self) -> DataFrame:
+        return self.getCurrentMarketData()
 
     def getHistoricMarketData(self, dateStart : datetime.datetime, dateEnd : datetime.datetime) -> DataFrame:
-        if(super().date < dateStart or super().date < dateEnd):
+        if(self.date < dateStart or self.date < dateEnd):
             raise Exception("Attempting to access out of time data")
             
-        return super().dataEngineAdapter.getDataForDateRange(dateStart, dateEnd, self.universe)
+        return self.dataEngineAdapter.getDataForDateRange(dateStart, dateEnd, self.universe)
 
     def getCurrentDate(self) -> datetime.datetime:
-        return super().date
+        return self.date
 
     def placeOrder(self, contract: Contract, order: Order) -> OrderStatus:
-        instrumentDf = super().dayOfMarket.loc(super().dayOfMarket["ticker" == contract.symbol])
+        instrumentDf = self.dayOfMarket.loc[self.dayOfMarket["ticker"] == contract.symbol]
         if(instrumentDf is not None):
             return OrderStatus(
                 cost=instrumentDf["Open"][0] * order.total_quantity,
@@ -47,8 +50,8 @@ class MongoAdapter(BaseAdapter):
                 cost=0,
                 status=OrderStatuses.UNFILLED,
                 contract = contract,
-                order = order)
+                order = order
             )
 
     def getCorporateInfos(self) -> [EquityCorporateData]:
-        return super().dataEngineAdapter.getCorporateInfos(self.universe)
+        return self.dataEngineAdapter.getCorporateInfos(self.universe)
