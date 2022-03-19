@@ -1,3 +1,4 @@
+from UtilityRunner.UtilityScripts.ScrapeTDAPI import ScrapeTdApi
 from UtilityRunner.UtilityScripts.ExampleUtilityScript import ExampleUtilityScript
 import logging
 import sys
@@ -5,15 +6,16 @@ from UtilityRunner.UtilityScripts.Exceptions.TooManyInputFiles import TooManyInp
 from UtilityRunner.UtilityScripts.PopulateYahooScript import PopulateYahooScript
 from UtilityRunner.UtilityScripts.LoadNasdaqTickers import LoadNasdaqTickers
 from UtilityRunner.UtilityScripts.RunComponentsScript import RunComponentScript
-
-logging.basicConfig(level=logging.INFO)
+from UtilityRunner.UtilityScripts.ScrapeTDAPI import ScrapeTdApi
+logging.basicConfig(level=logging.DEBUG)
 
 
 utilityScripts = [
     ExampleUtilityScript(),
     PopulateYahooScript(),
     LoadNasdaqTickers(),
-    RunComponentScript()
+    RunComponentScript(),
+    ScrapeTdApi()
 ]
 
 
