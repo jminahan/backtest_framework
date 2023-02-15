@@ -25,6 +25,8 @@ from Domain.OrderModels.TradeInfo import TradeInfo
 
 class PortfolioEngine():
 
+    entityName : str = "PortfolioEngine"
+
     universe : [str]
     alphaModel : AlphaModelComponent
     portfolioBalancer : PortfolioBalancerComponent
@@ -57,6 +59,9 @@ class PortfolioEngine():
     def initializeAdapter(self, configs : PortfolioEngineConfigDTO):
         if(self.configs.adapterType == AdapterType.MONGO):
             return MongoAdapter()
+        else:
+            logging.error("Attempted to use unsupported {} adapter type, {}", self.entityName, config.adapterType);
+            return Exception()
 
     def getCurrentPortfolio(self) -> Portfolio:
         return self.adapter.getCurrentPortfolio()

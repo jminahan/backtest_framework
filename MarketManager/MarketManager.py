@@ -10,6 +10,8 @@ from Domain.OrderModels.Order import Order
 from Domain.OrderModels.Contract import Contract
 
 class MarketManager():
+    entityName : str = "MarketManager"
+
     config : MarketManagerConfigDTO
     adapter : BaseAdapter
     dataEngineAdapter : DataEngineAdapter
@@ -27,6 +29,9 @@ class MarketManager():
     def initializeAdapter(self, dataEngineAdapter : DataEngineAdapter, date : datetime.datetime) -> BaseAdapter:
         if(self.config.adapterType == AdapterType.MONGO):
             return MongoAdapter(dataEngineAdapter, date=date, universe =self.universe)
+        else:
+            logging.error("Attempted to use unsupported {} adapter type, {}", self.entityName, self.config.adapterType);
+            return Exception()
 
     def placeOrder(self, order : Order, contract : Contract, callback) -> OrderStatus:
         callback(self.adapter.placeOrder(order, contract))

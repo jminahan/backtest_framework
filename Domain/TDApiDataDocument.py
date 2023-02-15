@@ -9,7 +9,7 @@ class TdApiDataDocument(Document):
 
     def to_dict(self, ):
         """
-        Historical data to dict
+        Historical data to dict, used pretty much exclusively in the td ameritrade scrape script
         """
         return {
             "associatedEquity" : self.associatedEquity.primary_key,
